@@ -1,0 +1,11 @@
+**************************************************
+User Overview
+**************************************************
+Users registered: 1
+Total tasks: 2
+**************************************************
+User: admin
+Total tasks for admin: 2 (100.0 of total tasks).
+admin has completed 0.0% of their tasks.
+100.0% remain incomplete (of which 50.0% are overdue.)
+**************************************************
