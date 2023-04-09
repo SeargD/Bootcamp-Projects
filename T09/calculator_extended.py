@@ -2,15 +2,15 @@
 Simple calculator app which takes 2 numbers and an operator from the user and outputs the result to screen and text.
 
 '''
+
 Opener = '''This program will take any 2 numbers  and an  operator ( +, -, *, / ) and ouptut the resulting value to console.
 The results will also be addeed to a text file.
 Floating point numbers and integer values are fine.
-Alternatively, you may input the name of a text file in the form of:
-{Number 1} {operator} {Number 2}
-{Number 1} {operator} {Number 2}
+Alternatively, you may input the name of a text file containing equations in the format:
+Number 1 operator Number 2
+Number 1 operator Number 2
 
-The program will print the results and add them to a file
-Enter 'quit' as the first number to terminate the program.'''
+The program will print the results and add them to a file'''
 
 print(Opener)
 
@@ -23,28 +23,43 @@ while RunState == True:
     Operator = ""
     Filename = ""
 
-    ValidInput = False
-    while ValidInput == False:
-        UserInput = input("Please enter a number or a text file (example.txt): ")
-        try:    #Testing numeric input
-            float(UserInput)
-            Number1 = float(UserInput)
-            ValidInput = True
-        except Exception:
-            print("Input failed to cast as a number")
-            
-            if UserInput.lower() == "quit": #Testing for user quit request
-                quit()
+    MenuOptions = '''\nWould you like to?
+    1. Enter an equation
+    2. Parse equations from txt
+    3. quit
+    '''
+    
+    UserSelection = input(MenuOptions)
 
+    ValidInput = False
+    if UserSelection == "1":
+        while ValidInput == False:
+            UserInput = input("Please enter a number: ")
+            try:    #Testing numeric input
+                float(UserInput)
+                Number1 = float(UserInput)
+                ValidInput = True
+            except Exception:
+                print("Input failed to cast as a number")
+    elif UserSelection == "2":
+        while ValidInput == False:
+            UserInput = input("Please input your txt file name: ")
             try:    #Testing for valid filename
                 f = open(UserInput, 'r')
                 f.close()
                 Filename = UserInput
                 ValidInput = True
                 RunState = False
-                print(f"{Filename} found. Reading input")
+                print(f"{Filename} found. Reading input\n")
             except FileNotFoundError:
                 print("File not found please enter a valid filename")
+    elif UserSelection == "3":
+        quit()
+    else:
+        print("Invalid option. Try again")
+        continue
+
+    
         
     if Filename == "":
         ValidInput = False #resets loop condition for user input validation
@@ -85,32 +100,35 @@ while RunState == True:
                 UserInput = input("Invalid operator. Please try again (+, -, *, /): ")
                 continue
                 
-        with open('output.txt', 'a') as OutputFile:
+        with open('output.txt', 'a') as OutputFile:#Outputs parsed equations
             OutputString = f"\n{Number1} {Operator} {Number2} = {Result}"
             print(OutputString)
             OutputFile.write(OutputString)
+
+    if Filename == "output.txt":
+        print("output.txt reserved for storing solved equations please use another name.")
+        continue
 
     if Filename != "":
         with open(Filename, 'r') as InputFile:
             lisInput = InputFile.readlines()
 
-        lisOutput = list()
-        for line in lisInput: 
-            line = line.strip('\n') #remove extraneous whitespace from input file
+        for line in lisInput: #Reads each equation line by line 
+            line = line.strip() #remove extraneous whitespace from input file
 
             lisFormula = line.split(' ')
 
             if len(lisFormula) != 3:
                 OutputString = "Invalid operation."
-                lisOutput.append(OutputString)
                 print(OutputString)
+                continue #Prevents invalid operations printing to file
             else:
                 try:
                     Number1 = float(lisFormula[0])
                     Number2 = float(lisFormula[2])
                 except Exception:
                     print("Invalid operand.")
-                    continue
+                    continue #Prevents invalid operations printing to file
 
                 Operator = lisFormula[1]
             
@@ -135,8 +153,8 @@ while RunState == True:
                     OutputString = f"\n{Number1} {Operator} {Number2} = {Result}"
             else:
                 OutputString = "Invalid operator."
-                lisOutput.append(OutputString)
                 print(OutputString)
+                continue #Prevents invalid operations printing to file
 
             with open('output.txt', 'a') as OutputFile:
                 
